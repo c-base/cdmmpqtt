@@ -125,7 +125,7 @@ def send_discovery_msg(client, mqtt_client_name, mqtt_client_id):
         "protocol": "discovery",
         "payload": {
             "component": "c-base/music-player",
-            "label": "Show URL on a public screen.",
+            "label": "c-base music player",
             "inports": [
             #     {
             #         "queue": "%s/open" % mqtt_client_name,
@@ -144,7 +144,7 @@ def send_discovery_msg(client, mqtt_client_name, mqtt_client_id):
             ],
             "role": "%s" % mqtt_client_name,
             "id": mqtt_client_id,
-            "icon": "television"
+            "icon": "music"
         },
     }
     log.debug("Sending FBP discovery message.")
