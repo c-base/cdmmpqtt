@@ -78,6 +78,7 @@ def mqtt_connect(client, mqtt_server, mqtt_client_name, mqtt_client_password, us
 
 
 def publish_dict(client, mqtt_client_name, name, data):
+    log.debug("Publish: %s" % repr(data))
     encoded = json.dumps(data).encode('utf-8')
     client.publish('%s/%s' % (mqtt_client_name, name), encoded)
 
@@ -90,7 +91,7 @@ def mqtt_loop(mpd_host, mqtt_server, mqtt_client_id, mqtt_client_name, mqtt_clie
     # Set up the signal handler für Ctrl+C
     log.debug("MQTT loop started.")
     client = mqtt.Client(mqtt_client_id)
-    mqtt_connect(client, mqtt_server, mqtt_client_name, mqtt_client_password)
+    mqtt_connect(client, mqtt_server=mqtt_server, mqtt_client_name=mqtt_client_name, mqtt_client_password=mqtt_client_password)
     send_discovery_msg(client, mqtt_client_name, mqtt_client_id)
     last_discovery = datetime.now()
     last_update = datetime.now() - timedelta(seconds=60)
@@ -99,7 +100,7 @@ def mqtt_loop(mpd_host, mqtt_server, mqtt_client_id, mqtt_client_name, mqtt_clie
     while True:
         result = client.loop(1)
         if result != 0:
-            mqtt_connect(client)
+            mqtt_connect(client, mqtt_server=mqtt_server, mqtt_client_name=mqtt_client_name, mqtt_client_password=mqtt_client_password)
         time.sleep(0.5)
         # Do the actual MQTT stuff
         status = mpd_status(mpd_host)
@@ -174,11 +175,12 @@ if __name__ == '__main__':
     mqtt_client_password = 'ejwfoiwejfwofijf38fu98f1hfnwevlkwenvlwevjn'
     mqtt_client_id = "cdmmpqtt%d" % getnode()
 
+    print(repr(arguments))
+
     root = logging.getLogger()
-#    root.setLevel(logging.DEBUG)
+    # root.setLevel(logging.DEBUG)
 
     ch = logging.StreamHandler(sys.stdout)
-#    ch.setLevel(logging.DEBUG)
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     ch.setFormatter(formatter)
     root.addHandler(ch)
